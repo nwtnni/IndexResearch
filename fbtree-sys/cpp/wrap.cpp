@@ -8,12 +8,14 @@ std::unique_ptr<FBTree> fbtree_new() { return std::make_unique<FBTree>(); }
 
 void fbtree_upsert(FBTree *tree, uint64_t key, uint32_t value) {
   EpochGuard epoch_guard(tree->inner.get_epoch());
-  tree->inner.upsert(key, value);
+  void *old = tree->inner.upsert(key, value);
+  epoch_guard.retire(old);
 }
 
 void fbtree_update(FBTree *tree, uint64_t key, uint32_t value) {
   EpochGuard epoch_guard(tree->inner.get_epoch());
-  tree->inner.update(key, value);
+  void *old = tree->inner.update(key, value);
+  epoch_guard.retire(old);
 }
 
 bool fbtree_lookup(FBTree *tree, uint64_t key, uint32_t *value) {
