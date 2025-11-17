@@ -20,7 +20,6 @@ fn main() {
 
     // Must be after linking
     pkg_config::probe_library("tbb").expect("Could not find tbb");
-    pkg_config::probe_library("mimalloc").expect("Could not find mimalloc");
 
     for path in files.iter().chain(&includes) {
         println!("cargo:rerun-if-changed={path}");
