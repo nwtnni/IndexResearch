@@ -1,0 +1,28 @@
+diff --git a/epoch.h b/epoch.h
+index 8675355..0a2bfc1 100644
+--- a/epoch.h
++++ b/epoch.h
+@@ -295,6 +295,10 @@ class alignas(64) EpochDetail {
+     // incrementally scan the announced epochs of all threads
+     if(++limbolist.opcount == EpochConfig::kOpThreshold) {
+       limbolist.opcount = 0;
++      if (limbolist.checked_it == limbo_lists_.end()) {
++          return;
++      }
++
+       LimboList& olimbo = *limbolist.checked_it;
+       uint64_t tepoch = olimbo.thread_epoch.load(std::memory_order_relaxed);
+       if(real_epoch(tepoch) == gepoch || is_quiescent(tepoch)) {
+diff --git a/internal/hash-internal.h b/internal/hash-internal.h
+index a4ca18a..21168c1 100644
+--- a/internal/hash-internal.h
++++ b/internal/hash-internal.h
+@@ -619,7 +619,7 @@ static uint128 CityMurmur(const char* s, size_t len, uint128 seed) {
+ 
+ inline long city_likely(long exp) { return __builtin_expect(exp, 1); }
+ 
+-uint128 CityHash128WithSeed(const char* s, size_t len, uint128 seed) {
++inline uint128 CityHash128WithSeed(const char* s, size_t len, uint128 seed) {
+   if(len < 128) {
+     return CityMurmur(s, len, seed);
+   }
