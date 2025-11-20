@@ -1,26 +1,24 @@
-#include <memory>
-
 #include "wrap.h"
 
 using util::EpochGuard;
 
-std::unique_ptr<FBTree> fbtree_new() { return std::make_unique<FBTree>(); }
+std::unique_ptr<FbInt> fbtree_new() { return std::make_unique<FbInt>(); }
 
-void fbtree_upsert(FBTree *tree, uint64_t key, uint32_t value) {
-  EpochGuard epoch_guard(tree->inner.get_epoch());
-  void *old = tree->inner.upsert(key, value);
+void fbtree_upsert(FbInt *tree, uint64_t key, uint64_t value) {
+  EpochGuard epoch_guard(tree->get_epoch());
+  void *old = tree->upsert(key, value);
   epoch_guard.retire(old);
 }
 
-void fbtree_update(FBTree *tree, uint64_t key, uint32_t value) {
-  EpochGuard epoch_guard(tree->inner.get_epoch());
-  void *old = tree->inner.update(key, value);
+void fbtree_update(FbInt *tree, uint64_t key, uint64_t value) {
+  EpochGuard epoch_guard(tree->get_epoch());
+  void *old = tree->update(key, value);
   epoch_guard.retire(old);
 }
 
-bool fbtree_lookup(FBTree *tree, uint64_t key, uint32_t *value) {
-  EpochGuard epoch_guard(tree->inner.get_epoch());
-  auto pair = tree->inner.lookup(key);
+bool fbtree_lookup(FbInt *tree, uint64_t key, uint64_t *value) {
+  EpochGuard epoch_guard(tree->get_epoch());
+  auto pair = tree->lookup(key);
   if (pair == nullptr) {
     return false;
   }

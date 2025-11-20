@@ -5,17 +5,17 @@ mod ffi {
     unsafe extern "C++" {
         include!("fbtree-sys/include/wrap.h");
 
-        type FBTree;
+        type FbInt;
 
-        fn fbtree_new() -> UniquePtr<FBTree>;
+        fn fbtree_new() -> UniquePtr<FbInt>;
 
-        unsafe fn fbtree_upsert(tree: *mut FBTree, key: u64, value: u32);
-        unsafe fn fbtree_update(tree: *mut FBTree, key: u64, value: u32);
-        unsafe fn fbtree_lookup(tree: *mut FBTree, key: u64, value: *mut u32) -> bool;
+        unsafe fn fbtree_upsert(tree: *mut FbInt, key: u64, value: u64);
+        unsafe fn fbtree_update(tree: *mut FbInt, key: u64, value: u64);
+        unsafe fn fbtree_lookup(tree: *mut FbInt, key: u64, value: *mut u64) -> bool;
     }
 }
 
-pub struct FbTree(UniquePtr<ffi::FBTree>);
+pub struct FbTree(UniquePtr<ffi::FbInt>);
 
 unsafe impl Send for FbTree {}
 unsafe impl Sync for FbTree {}
@@ -28,23 +28,23 @@ impl Default for FbTree {
 
 impl FbTree {
     #[inline]
-    pub fn upsert(&self, key: u64, value: u32) {
+    pub fn upsert(&self, key: u64, value: u64) {
         unsafe {
             ffi::fbtree_upsert(self.0.as_mut_ptr(), key, value);
         }
     }
 
     #[inline]
-    pub fn update(&self, key: u64, value: u32) {
+    pub fn update(&self, key: u64, value: u64) {
         unsafe {
             ffi::fbtree_update(self.0.as_mut_ptr(), key, value);
         }
     }
 
     #[inline]
-    pub fn lookup(&self, key: u64) -> Option<u32> {
+    pub fn lookup(&self, key: u64) -> Option<u64> {
         unsafe {
-            let mut value = 0u32;
+            let mut value = 0u64;
             ffi::fbtree_lookup(self.0.as_mut_ptr(), key, &mut value).then_some(value)
         }
     }
@@ -61,11 +61,11 @@ mod tests {
         const COUNT: u64 = 100_000;
 
         for i in 0..COUNT {
-            map.upsert(i, i as u32);
+            map.upsert(i, i);
         }
 
         for i in 0..COUNT {
-            assert_eq!(map.lookup(i), Some(i as u32));
+            assert_eq!(map.lookup(i), Some(i));
         }
     }
 }
