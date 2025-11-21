@@ -44,3 +44,14 @@ void fbtree_string_update(FbString *tree, char *key, const size_t keylen,
 
 bool fbtree_string_lookup(FbString *tree, char *key, const size_t keylen,
                           uint64_t *value);
+
+using FbStringIter = FbIter<FeatureBTree::String>;
+
+std::unique_ptr<FbStringIter> fbtree_string_iter(FbString *tree, char *key,
+                                                 const size_t keylen);
+
+void fbtree_string_iter_advance(FbStringIter *iter);
+
+bool fbtree_string_iter_end(FbStringIter *iter);
+
+uint64_t fbtree_string_iter_get(FbStringIter *iter);

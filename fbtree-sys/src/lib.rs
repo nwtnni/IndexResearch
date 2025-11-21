@@ -19,6 +19,7 @@ mod ffi {
         unsafe fn fbtree_u64_iter_get(iter: *mut FbU64Iter) -> u64;
 
         type FbString;
+        type FbStringIter;
 
         fn fbtree_string_new() -> UniquePtr<FbString>;
         unsafe fn fbtree_string_upsert(
@@ -39,6 +40,14 @@ mod ffi {
             keylen: usize,
             value: *mut u64,
         ) -> bool;
+        unsafe fn fbtree_string_iter(
+            tree: *mut FbString,
+            key: *mut c_char,
+            keylen: usize,
+        ) -> UniquePtr<FbStringIter>;
+        unsafe fn fbtree_string_iter_end(iter: *mut FbStringIter) -> bool;
+        unsafe fn fbtree_string_iter_advance(iter: *mut FbStringIter);
+        unsafe fn fbtree_string_iter_get(iter: *mut FbStringIter) -> u64;
     }
 }
 
@@ -148,6 +157,34 @@ impl FbString {
             .then_some(value)
         }
     }
+
+    #[inline]
+    pub fn iter(&self, key: &str) -> FbStringIter {
+        FbStringIter(unsafe {
+            ffi::fbtree_string_iter(
+                self.0.as_mut_ptr(),
+                key.as_ptr().cast_mut().cast(),
+                key.len(),
+            )
+        })
+    }
+}
+
+pub struct FbStringIter(UniquePtr<ffi::FbStringIter>);
+
+impl Iterator for FbStringIter {
+    type Item = u64;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        if unsafe { ffi::fbtree_string_iter_end(self.0.as_mut_ptr()) } {
+            return None;
+        }
+
+        let value = unsafe { ffi::fbtree_string_iter_get(self.0.as_mut_ptr()) };
+        unsafe { ffi::fbtree_string_iter_advance(self.0.as_mut_ptr()) };
+        Some(value)
+    }
 }
 
 #[cfg(test)]
@@ -178,12 +215,16 @@ mod tests {
 
         const COUNT: u64 = 100_000;
 
-        for i in 0..COUNT {
-            map.upsert(&format!("key{i}"), i);
+        let keys = (0..COUNT).map(|i| format!("key{i:06}")).collect::<Vec<_>>();
+
+        for (i, key) in keys.iter().enumerate() {
+            map.upsert(key, i as u64);
         }
 
-        for i in 0..COUNT {
-            assert_eq!(map.lookup(&format!("key{i}")), Some(i));
+        for (i, key) in keys.iter().enumerate() {
+            assert_eq!(map.lookup(key), Some(i as u64));
         }
+
+        assert!(map.iter("key000005").eq(5..COUNT));
     }
 }

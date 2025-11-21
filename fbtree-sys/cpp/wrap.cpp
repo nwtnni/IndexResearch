@@ -40,21 +40,21 @@ std::unique_ptr<FbString> fbtree_string_new() {
   return std::make_unique<FbString>();
 }
 
-void fbtree_string_upsert(FbString *tree, char *key, size_t keylen,
+void fbtree_string_upsert(FbString *tree, char *key, const size_t keylen,
                           uint64_t value) {
   EpochGuard epoch_guard(tree->get_epoch());
   void *old = tree->upsert(key, keylen, value);
   epoch_guard.retire(old);
 }
 
-void fbtree_string_update(FbString *tree, char *key, size_t keylen,
+void fbtree_string_update(FbString *tree, char *key, const size_t keylen,
                           uint64_t value) {
   EpochGuard epoch_guard(tree->get_epoch());
   void *old = tree->update(key, keylen, value);
   epoch_guard.retire(old);
 }
 
-bool fbtree_string_lookup(FbString *tree, char *key, size_t keylen,
+bool fbtree_string_lookup(FbString *tree, char *key, const size_t keylen,
                           uint64_t *value) {
   EpochGuard epoch_guard(tree->get_epoch());
   auto pair = tree->lookup(key, keylen);
@@ -63,4 +63,19 @@ bool fbtree_string_lookup(FbString *tree, char *key, size_t keylen,
   }
   *value = pair->value;
   return true;
+}
+
+std::unique_ptr<FbStringIter> fbtree_string_iter(FbString *tree, char *key,
+                                                 const size_t keylen) {
+  auto iter = std::make_unique<FbStringIter>(tree->get_epoch());
+  iter->iter = tree->lower_bound(key, keylen);
+  return iter;
+}
+
+void fbtree_string_iter_advance(FbStringIter *iter) { iter->iter.advance(); }
+
+bool fbtree_string_iter_end(FbStringIter *iter) { return iter->iter.end(); }
+
+uint64_t fbtree_string_iter_get(FbStringIter *iter) {
+  return iter->iter->value;
 }
