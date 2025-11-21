@@ -6,11 +6,17 @@ mod ffi {
         include!("fbtree-sys/include/wrap.h");
 
         type FbU64;
+        type FbU64Iter;
 
         fn fbtree_u64_new() -> UniquePtr<FbU64>;
         unsafe fn fbtree_u64_upsert(tree: *mut FbU64, key: u64, value: u64);
         unsafe fn fbtree_u64_update(tree: *mut FbU64, key: u64, value: u64);
         unsafe fn fbtree_u64_lookup(tree: *mut FbU64, key: u64, value: *mut u64) -> bool;
+
+        unsafe fn fbtree_u64_iter(tree: *mut FbU64, key: u64) -> UniquePtr<FbU64Iter>;
+        unsafe fn fbtree_u64_iter_end(iter: *mut FbU64Iter) -> bool;
+        unsafe fn fbtree_u64_iter_advance(iter: *mut FbU64Iter);
+        unsafe fn fbtree_u64_iter_get(iter: *mut FbU64Iter) -> u64;
 
         type FbString;
 
@@ -68,6 +74,28 @@ impl FbU64 {
             let mut value = 0u64;
             ffi::fbtree_u64_lookup(self.0.as_mut_ptr(), key, &mut value).then_some(value)
         }
+    }
+
+    #[inline]
+    pub fn iter(&self, key: u64) -> FbU64Iter {
+        FbU64Iter(unsafe { ffi::fbtree_u64_iter(self.0.as_mut_ptr(), key) })
+    }
+}
+
+pub struct FbU64Iter(UniquePtr<ffi::FbU64Iter>);
+
+impl Iterator for FbU64Iter {
+    type Item = u64;
+
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        if unsafe { ffi::fbtree_u64_iter_end(self.0.as_mut_ptr()) } {
+            return None;
+        }
+
+        let value = unsafe { ffi::fbtree_u64_iter_get(self.0.as_mut_ptr()) };
+        unsafe { ffi::fbtree_u64_iter_advance(self.0.as_mut_ptr()) };
+        Some(value)
     }
 }
 
@@ -140,6 +168,8 @@ mod tests {
         for i in 0..COUNT {
             assert_eq!(map.lookup(i), Some(i));
         }
+
+        assert!(map.iter(0).eq(0..COUNT));
     }
 
     #[test]
