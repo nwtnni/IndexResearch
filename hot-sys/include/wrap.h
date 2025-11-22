@@ -1,9 +1,17 @@
 #include <cstdint>
 #include <memory>
 
-#include "hot.h"
+class HOTTree {
+public:
+    HOTTree();
+    ~HOTTree();
 
-class HOTTree { public: HotTree<uint64_t, uint32_t> inner; };
+    bool upsert(std::uint64_t key, std::uint32_t value);
+    bool search(std::uint64_t key, std::uint32_t* value);
+
+private:
+    void* inner_; 
+};
 
 std::unique_ptr<HOTTree> hottree_new();
 
