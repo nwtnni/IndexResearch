@@ -1,0 +1,45 @@
+./boost_hash,0%update,n=10000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=22,mops=362
+./boost_hash,0%update,n=10000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=21,mops=362
+./boost_hash,0%update,n=10000000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=31,mops=849
+./boost_hash,0%update,n=10000000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=32,mops=853
+
+./boost_hash,10%update,n=10000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=22,mops=175
+./boost_hash,10%update,n=10000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=21,mops=174
+./boost_hash,10%update,n=10000000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=31,mops=277
+./boost_hash,10%update,n=10000000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=32,mops=277
+
+./boost_hash,50%update,n=10000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=21,mops=49
+./boost_hash,50%update,n=10000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=21,mops=49
+./boost_hash,50%update,n=10000000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=31,mops=68
+./boost_hash,50%update,n=10000000,p=128,long_long,z=0,grow=0,mem_pe=27,insert_mops=31,mops=68
+
+./boost_hash,0%update,n=10000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=21,mops=18
+./boost_hash,0%update,n=10000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=21,mops=19
+./boost_hash,0%update,n=10000000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=31,mops=66
+./boost_hash,0%update,n=10000000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=32,mops=64
+
+./boost_hash,10%update,n=10000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=21,mops=28
+./boost_hash,10%update,n=10000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=21,mops=26
+./boost_hash,10%update,n=10000000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=31,mops=35
+./boost_hash,10%update,n=10000000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=31,mops=26
+
+./boost_hash,50%update,n=10000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=21,mops=7
+./boost_hash,50%update,n=10000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=22,mops=7
+./boost_hash,50%update,n=10000000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=32,mops=6
+./boost_hash,50%update,n=10000000,p=128,long_long,z=0.99,grow=0,mem_pe=27,insert_mops=31,mops=4
+
+./boost_hash,10%update,n=10000,p=128,int,z=0,grow=0,mem_pe=17,insert_mops=22,mops=179
+./boost_hash,10%update,n=10000,p=128,int,z=0,grow=0,mem_pe=17,insert_mops=22,mops=178
+./boost_hash,10%update,n=10000000,p=128,int,z=0,grow=0,mem_pe=17,insert_mops=32,mops=282
+./boost_hash,10%update,n=10000000,p=128,int,z=0,grow=0,mem_pe=17,insert_mops=31,mops=282
+
+./boost_hash,0%update,n=1229916,p=128,string_4xlong,trigram,grow=0,mem_pe=111,insert_mops=25,mops=38
+./boost_hash,0%update,n=1229916,p=128,string_4xlong,trigram,grow=0,mem_pe=111,insert_mops=26,mops=42
+./boost_hash,10%update,n=1229916,p=128,string_4xlong,trigram,grow=0,mem_pe=110,insert_mops=26,mops=36
+./boost_hash,10%update,n=1229916,p=128,string_4xlong,trigram,grow=0,mem_pe=110,insert_mops=26,mops=49
+./boost_hash,50%update,n=1229916,p=128,string_4xlong,trigram,grow=0,mem_pe=111,insert_mops=25,mops=5
+./boost_hash,50%update,n=1229916,p=128,string_4xlong,trigram,grow=0,mem_pe=111,insert_mops=26,mops=5
+
+initial insert geometric mean of mops = 29.8126
+benchmark geometric mean of mops = 58.1537
+bytes/element geometric mean = 37.8974
