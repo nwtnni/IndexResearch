@@ -1,0 +1,11 @@
+[package]
+name = "hot-sys"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cxx = "1.0.188"
+
+[build-dependencies]
+cxx-build = "1.0.188"
+pkg-config = "0.3.32"
