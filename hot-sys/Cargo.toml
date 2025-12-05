@@ -9,4 +9,3 @@ cxx = "1.0.188"
 [build-dependencies]
 cxx-build = "1.0.188"
 pkg-config = "0.3.32"
-

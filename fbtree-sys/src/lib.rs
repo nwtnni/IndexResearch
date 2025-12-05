@@ -121,7 +121,7 @@ impl Default for FbString {
 
 impl FbString {
     #[inline]
-    pub fn upsert(&self, key: &str, value: u64) {
+    pub fn upsert(&self, key: &[u8], value: u64) {
         unsafe {
             ffi::fbtree_string_upsert(
                 self.0.as_mut_ptr(),
@@ -133,7 +133,7 @@ impl FbString {
     }
 
     #[inline]
-    pub fn update(&self, key: &str, value: u64) {
+    pub fn update(&self, key: &[u8], value: u64) {
         unsafe {
             ffi::fbtree_string_update(
                 self.0.as_mut_ptr(),
@@ -145,7 +145,7 @@ impl FbString {
     }
 
     #[inline]
-    pub fn lookup(&self, key: &str) -> Option<u64> {
+    pub fn lookup(&self, key: &[u8]) -> Option<u64> {
         unsafe {
             let mut value = 0u64;
             ffi::fbtree_string_lookup(
@@ -159,7 +159,7 @@ impl FbString {
     }
 
     #[inline]
-    pub fn iter(&self, key: &str) -> FbStringIter {
+    pub fn iter(&self, key: &[u8]) -> FbStringIter {
         FbStringIter(unsafe {
             ffi::fbtree_string_iter(
                 self.0.as_mut_ptr(),
@@ -218,13 +218,13 @@ mod tests {
         let keys = (0..COUNT).map(|i| format!("key{i:06}")).collect::<Vec<_>>();
 
         for (i, key) in keys.iter().enumerate() {
-            map.upsert(key, i as u64);
+            map.upsert(key.as_bytes(), i as u64);
         }
 
         for (i, key) in keys.iter().enumerate() {
-            assert_eq!(map.lookup(key), Some(i as u64));
+            assert_eq!(map.lookup(key.as_bytes()), Some(i as u64));
         }
 
-        assert!(map.iter("key000005").eq(5..COUNT));
+        assert!(map.iter(b"key000005").eq(5..COUNT));
     }
 }
