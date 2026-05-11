@@ -137,7 +137,7 @@ class alignas(Config::kAlignSize) LeafNode {
   KVPair* access(int pos) {
     if(pos < 0 || pos >= kNodeSize) return nullptr;
     uint64_t mask = 0x01ul << pos;
-    if(mask & bitmap_ == 0) return nullptr;
+    if((mask & bitmap_) == 0) return nullptr;
     return kvs_[pos].load(load_order);
   }
 
@@ -596,7 +596,7 @@ class alignas(Config::kAlignSize) LeafNode<String, V> {
   KVPair* access(int pos) {
     if(pos < 0 || pos >= kNodeSize) return nullptr;
     uint64_t mask = 0x01ul << pos;
-    if(mask & bitmap_ == 0) return nullptr;
+    if((mask & bitmap_) == 0) return nullptr;
     return kvs_[pos].load(load_order);
   }
 
