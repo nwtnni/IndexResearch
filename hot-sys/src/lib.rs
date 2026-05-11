@@ -1,5 +1,4 @@
 use cxx::UniquePtr;
-use std::ffi::CString;
 
 #[cxx::bridge]
 mod ffi {
@@ -53,9 +52,7 @@ impl HotTreeU64 {
 
     #[inline]
     pub fn search_u64(&self, key: u64, value: &mut u64) -> bool {
-        unsafe {
-            ffi::hottree_u64_search(self.0.as_mut_ptr(), key, value)
-        }
+        unsafe { ffi::hottree_u64_search(self.0.as_mut_ptr(), key, value) }
     }
 }
 
@@ -74,12 +71,11 @@ impl Default for HotTreeString {
 
 impl HotTreeString {
     #[inline]
-    pub fn upsert(&self, key: &str, value: u64) {
-        let cstr = CString::new(key).expect("key must not contain interior NUL bytes");
+    pub fn upsert(&self, key: &[u8], value: u64) {
         unsafe {
             let _ = ffi::hottree_string_upsert(
                 self.0.as_mut_ptr(),
-                cstr.as_ptr(),
+                key.as_ptr().cast(),
                 key.len(),
                 value,
             );
@@ -87,11 +83,10 @@ impl HotTreeString {
     }
 
     #[inline]
-    pub fn search(&self, key: &str) -> Option<u64> {
-        let cstr = CString::new(key).expect("key must not contain interior NUL bytes");
+    pub fn search(&self, key: &[u8]) -> Option<u64> {
         unsafe {
             let mut value = 0u64;
-            if ffi::hottree_string_search(self.0.as_mut_ptr(), cstr.as_ptr(), &mut value) {
+            if ffi::hottree_string_search(self.0.as_mut_ptr(), key.as_ptr().cast(), &mut value) {
                 Some(value)
             } else {
                 None
@@ -128,13 +123,12 @@ mod tests {
 
         for i in 0..COUNT {
             let key = format!("key{i:06}");
-            tree.upsert(&key, i);
+            tree.upsert(key.as_bytes(), i);
         }
 
         for i in 0..COUNT {
             let key = format!("key{i:06}");
-            assert_eq!(tree.search(&key), Some(i));
+            assert_eq!(tree.search(key.as_bytes()), Some(i));
         }
     }
 }
-
