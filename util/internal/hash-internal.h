@@ -619,7 +619,7 @@ static uint128 CityMurmur(const char* s, size_t len, uint128 seed) {
 
 inline long city_likely(long exp) { return __builtin_expect(exp, 1); }
 
-uint128 CityHash128WithSeed(const char* s, size_t len, uint128 seed) {
+inline uint128 CityHash128WithSeed(const char* s, size_t len, uint128 seed) {
   if(len < 128) {
     return CityMurmur(s, len, seed);
   }

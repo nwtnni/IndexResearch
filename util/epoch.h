@@ -295,6 +295,10 @@ class alignas(64) EpochDetail {
     // incrementally scan the announced epochs of all threads
     if(++limbolist.opcount == EpochConfig::kOpThreshold) {
       limbolist.opcount = 0;
+      if (limbolist.checked_it == limbo_lists_.end()) {
+          return;
+      }
+
       LimboList& olimbo = *limbolist.checked_it;
       uint64_t tepoch = olimbo.thread_epoch.load(std::memory_order_relaxed);
       if(real_epoch(tepoch) == gepoch || is_quiescent(tepoch)) {
